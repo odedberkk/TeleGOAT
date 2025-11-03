@@ -57,7 +57,7 @@ def handle_voice(update: Update, context: CallbackContext):
     AudioSegment.from_file(ogg_path).export(mp3_path, format="mp3")
 
     # Construct public URL
-    public_url = f"http://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
+    public_url = f"https://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
     update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
     send_mqtt_message(f"download {public_url}", MQTT_COMMANDS_TOPIC)
 
