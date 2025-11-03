@@ -15,7 +15,7 @@ os.makedirs(PUBLIC_FOLDER, exist_ok=True)
 
 # ====== ====== MQTT Configuration ====== ======
 MQTT_BROKER = os.getenv("MQTT_BROKER")
-MQTT_PORT = 1833
+MQTT_PORT = 8883
 MQTT_COMMANDS_TOPIC = os.getenv("MQTT_COMMANDS_TOPIC")
 MQTT_RESPONSES_TOPIC = os.getenv("MQTT_RESPONSES_TOPIC")
 MQTT_USER = os.getenv("MQTT_USER")
