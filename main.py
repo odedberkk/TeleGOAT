@@ -7,7 +7,7 @@ from pydub import AudioSegment
 
 # ====== Configuration ======
 TOKEN = os.getenv("BOT_API_KEY")
-PORT = int(os.environ.get("PORT", 3000))
+PORT = int(os.environ.get("PORT", 5000))
 PUBLIC_FOLDER = "public/audio"
 os.makedirs(PUBLIC_FOLDER, exist_ok=True)
 
@@ -33,8 +33,9 @@ def handle_voice(update: Update, context: CallbackContext):
     # Convert to MP3
     AudioSegment.from_file(ogg_path).export(mp3_path, format="mp3")
 
-    # Public URL (Replit serves /public folder automatically)
-    public_url = f"https://{os.environ.get('REPL_SLUG')}.{os.environ.get('REPL_OWNER')}.repl.co/audio/{voice.file_id}.mp3"
+    # Public URL
+    replit_domain = os.environ.get('REPLIT_DEV_DOMAIN') or os.environ.get('REPL_SLUG', 'localhost') + '.' + os.environ.get('REPL_OWNER', '') + '.repl.co'
+    public_url = f"https://{replit_domain}/audio/{voice.file_id}.mp3"
     update.message.reply_text(f"Your MP3 is ready: {public_url}")
 
 # Setup updater and dispatcher
