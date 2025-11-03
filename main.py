@@ -26,13 +26,13 @@ PUBLIC_DOMAIN = os.getenv("PUBLIC_DOMAIN", "localhost:5000")
 app = Flask(__name__)
 
 # ====== Telegram Bot Handlers ======
-def send_mqtt_message(message):
+def send_mqtt_message(message, topic):
     client = mqtt.Client()
     client.username_pw_set(MQTT_USER, MQTT_PASS)
     client.tls_set(cert_reqs=ssl.CERT_REQUIRED)
     try:
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        client.publish(MQTT_TOPIC, message)
+        client.publish(topic, message)
         client.disconnect()
         print(f"[MQTT] Sent: {message}")
     except Exception as e:
@@ -58,6 +58,7 @@ def handle_voice(update: Update, context: CallbackContext):
     # Construct public URL
     public_url = f"https://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
     update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
+    send_mqtt_message(f"download {public_url}", MQTT_COMMANDS_TOPIC)
 
 # ====== Telegram Setup ======
 updater = Updater(TOKEN)
