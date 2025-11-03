@@ -4,6 +4,7 @@ from flask import Flask, send_from_directory
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from pydub import AudioSegment
+import paho.mqtt.client as mqtt
 
 # ====== Configuration ======
 TOKEN = os.getenv("BOT_API_KEY")
@@ -11,12 +12,32 @@ PORT = int(os.environ.get("PORT", 5000))
 PUBLIC_FOLDER = "public/audio"
 os.makedirs(PUBLIC_FOLDER, exist_ok=True)
 
+# ====== ====== MQTT Configuration ====== ======
+MQTT_BROKER = os.getenv("MQTT_BROKER")
+MQTT_PORT = 1833
+MQTT_COMMANDS_TOPIC = os.getenv("MQTT_COMMANDS_TOPIC")
+MQTT_RESPONSES_TOPIC = os.getenv("MQTT_RESPONSES_TOPIC")
+MQTT_USER = os.getenv("MQTT_USER")
+MQTT_PASS = os.getenv("MQTT_PASS")
+
 # Railway provides the domain via env if set manually
 PUBLIC_DOMAIN = os.getenv("PUBLIC_DOMAIN", "localhost:5000")
 
 app = Flask(__name__)
 
 # ====== Telegram Bot Handlers ======
+def send_mqtt_message(message):
+    client = mqtt.Client()
+    client.username_pw_set(MQTT_USER, MQTT_PASS)
+    client.tls_set(cert_reqs=ssl.CERT_REQUIRED)
+    try:
+        client.connect(MQTT_BROKER, MQTT_PORT, 60)
+        client.publish(MQTT_TOPIC, message)
+        client.disconnect()
+        print(f"[MQTT] Sent: {message}")
+    except Exception as e:
+        print(f"[MQTT] Error: {e}")
+        
 def start(update: Update, context: CallbackContext):
     update.message.reply_text("🎤 Send me a voice message and I'll give you a playable MP3 link!")
 
