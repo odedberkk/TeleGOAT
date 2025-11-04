@@ -143,6 +143,6 @@ def serve_audio(filename):
 
 # ====== Run both ======
 if __name__ == "__main__":
-    load_authorized_users()
+    init_db()
     threading.Thread(target=updater.start_polling, daemon=True).start()
     app.run(host="0.0.0.0", port=PORT)
