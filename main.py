@@ -113,17 +113,16 @@ def handle_voice(update: Update, context: CallbackContext):
         return
 
     file = context.bot.get_file(voice.file_id)
-    outFileName = f"meh.mp3"
     
     ogg_path = os.path.join(PUBLIC_FOLDER, f"{voice.file_id}.oga")
-    mp3_path = os.path.join(PUBLIC_FOLDER, outFileName)
+    mp3_path = os.path.join(PUBLIC_FOLDER, f"{voice.file_id}.mp3")
 
     # Download and convert
     file.download(ogg_path)
     AudioSegment.from_file(ogg_path).export(mp3_path, format="mp3")
 
     # Construct public URL
-    public_url = f"https://{PUBLIC_DOMAIN}/audio/{outFileName}"
+    public_url = f"https://{PUBLIC_DOMAIN}/audio/{f"{voice.file_id}.mp3"}"
     update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
 
     # Send MQTT message
