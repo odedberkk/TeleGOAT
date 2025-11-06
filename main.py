@@ -85,15 +85,15 @@ def send_mqtt_message(message, topic):
 
 # ====== Telegram Handlers ======
 def start(update: Update, context: CallbackContext):
-    command = update.message.text
-    update.message.reply_text(f"Commading the GOAT to {command}")
-    send_mqtt_message(command, MQTT_COMMANDS_TOPIC)
-    
-def command(update: Update, context: CallbackContext):
     update.message.reply_text(
         "🎤 Send me a voice message and I'll give you a playable MP3 link!\n"
         "🔒 Please authorize first by sending /auth <password>"
     )
+    
+def command(update: Update, context: CallbackContext):
+    command = context.args[0]
+    update.message.reply_text(f"Commading the GOAT to {command}")
+    send_mqtt_message(command, MQTT_COMMANDS_TOPIC)
     
 def auth(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
