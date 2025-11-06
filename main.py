@@ -147,7 +147,7 @@ def handle_voice(update: Update, context: CallbackContext):
 
     # Construct public URL
     public_url = upload_to_tmpfiles(mp3_path)
-    direct_url = url.replace("tmpfiles.org/", "tmpfiles.org/dl/")
+    direct_url = public_url.replace("tmpfiles.org/", "tmpfiles.org/dl/")
 
     #public_url = f"https://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
     
