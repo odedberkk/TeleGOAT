@@ -117,6 +117,14 @@ def upload_to_transfersh(file_path):
         print("Upload failed:", response.status_code, response.text)
         return None
         
+def upload_to_tmpfiles(path):
+    with open(path, "rb") as f:
+        r = requests.post(
+            "https://tmpfiles.org/api/v1/upload",
+            files={"file": f}
+        )
+    return r.json()["data"]["url"]
+        
 def handle_voice(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     if not is_user_authorized(user_id):
@@ -138,7 +146,7 @@ def handle_voice(update: Update, context: CallbackContext):
     AudioSegment.from_file(ogg_path).export(mp3_path, format="mp3")
 
     # Construct public URL
-    public_url = upload_to_transfersh(mp3_path)
+    public_url = upload_to_tmpfiles(mp3_path)
     #public_url = f"https://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
     
     update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
