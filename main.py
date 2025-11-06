@@ -151,10 +151,10 @@ def handle_voice(update: Update, context: CallbackContext):
 
     #public_url = f"https://{PUBLIC_DOMAIN}/audio/{voice.file_id}.mp3"
     
-    update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
+    update.message.reply_text(f"✅ Your MP3 is ready:\n{direct_url}")
 
     # Send MQTT message
-    send_mqtt_message(f"download {public_url}", MQTT_COMMANDS_TOPIC)
+    send_mqtt_message(f"download {direct_url}", MQTT_COMMANDS_TOPIC)
 
 # ====== Telegram Setup ======
 updater = Updater(TOKEN)
