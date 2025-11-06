@@ -7,6 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from pydub import AudioSegment
 import paho.mqtt.client as mqtt
 import psycopg2
+import requests
 
 # ====== Configuration ======
 TOKEN = os.getenv("BOT_API_KEY")
@@ -100,7 +101,22 @@ def auth(update: Update, context: CallbackContext):
         update.message.reply_text("✅ You are now authorized!")
     else:
         update.message.reply_text("❌ Wrong password!")
+        
+def upload_to_transfersh(file_path):
+    file_name = file_path.split("/")[-1]
+    url = f"https://transfer.sh/{file_name}"
 
+    with open(file_path, "rb") as f:
+        response = requests.put(url, data=f)
+
+    if response.status_code == 200:
+        download_url = response.text.strip()
+        print("Upload OK:", download_url)
+        return download_url
+    else:
+        print("Upload failed:", response.status_code, response.text)
+        return None
+        
 def handle_voice(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     if not is_user_authorized(user_id):
@@ -123,7 +139,8 @@ def handle_voice(update: Update, context: CallbackContext):
     AudioSegment.from_file(ogg_path).export(mp3_path, format="mp3")
 
     # Construct public URL
-    public_url = f"https://{PUBLIC_DOMAIN}/audio/{outFileName}"
+    #public_url = f"https://{PUBLIC_DOMAIN}/audio/{outFileName}"
+    public_url = upload_to_transfersh(outFileName)
     update.message.reply_text(f"✅ Your MP3 is ready:\n{public_url}")
 
     # Send MQTT message
