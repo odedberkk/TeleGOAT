@@ -84,17 +84,27 @@ def send_mqtt_message(message, topic):
         print(f"[MQTT] Error: {e}")
 
 # ====== Telegram Handlers ======
+def validateUser(update: Update):
+    user_id = update.message.from_user.id
+    if not is_user_authorized(user_id):
+        update.message.reply_text("🚫 You are not authorized. Please use /auth <password> first.")
+        return
+
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
         "🔒 Authorize first by sending /auth <password>, then use the other supported commands to command THE GOAT"
     )
     
 def meh(update: Update, context: CallbackContext):
+    validateUser(update)  
+    
     update.message.reply_text(f"Commanding the GOAT to MEHH")
     send_mqtt_message("meh", MQTT_COMMANDS_TOPIC)
         
         
 def letsgo(update: Update, context: CallbackContext):
+    validateUser(update) 
+    
     update.message.reply_text(f"Letss gooo!")
     send_mqtt_message("letsgo", MQTT_COMMANDS_TOPIC)
     
@@ -134,10 +144,7 @@ def upload_to_tmpfiles(path):
     return r.json()["data"]["url"]
         
 def handle_voice(update: Update, context: CallbackContext):
-    user_id = update.message.from_user.id
-    if not is_user_authorized(user_id):
-        update.message.reply_text("🚫 You are not authorized. Please use /auth <password> first.")
-        return
+    validateUser(update)        
 
     voice = update.message.voice
     if not voice:
