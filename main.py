@@ -86,14 +86,17 @@ def send_mqtt_message(message, topic):
 # ====== Telegram Handlers ======
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
-        "🎤 Send me a voice message and I'll give you a playable MP3 link!\n"
-        "🔒 Please authorize first by sending /auth <password>"
+        "🔒 Authorize first by sending /auth <password>, then use the other supported commands to command THE GOAT"
     )
     
-def command(update: Update, context: CallbackContext):
-    command = context.args[0]
-    update.message.reply_text(f"Commading the GOAT to {command}")
-    send_mqtt_message(command, MQTT_COMMANDS_TOPIC)
+def meh(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Commanding the GOAT to MEHH")
+    send_mqtt_message("meh", MQTT_COMMANDS_TOPIC)
+        
+        
+def letsgo(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Letss gooo!")
+    send_mqtt_message("letsgo", MQTT_COMMANDS_TOPIC)
     
 def auth(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
@@ -166,7 +169,8 @@ updater = Updater(TOKEN)
 dp = updater.dispatcher
 dp.add_handler(CommandHandler("start", start))
 dp.add_handler(CommandHandler("auth", auth))
-dp.add_handler(CommandHandler("goat", command))
+dp.add_handler(CommandHandler("meh", meh))
+dp.add_handler(CommandHandler("letsgo", letsgo))
 dp.add_handler(MessageHandler(Filters.voice, handle_voice))
 
 # ====== Flask server ======
